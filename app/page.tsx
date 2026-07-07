@@ -4,12 +4,12 @@ import { useState } from "react";
 import { Fuel, RefreshCw, ExternalLink } from "lucide-react";
 import CityPrices from "./components/CityPrices";
 import InteractiveCalculator from "./components/InteractiveCalculator";
-import DailyDataLogger from "./components/DailyDataLogger";
 import E20Impact from "./components/E20Impact";
 import CompatibilityTable from "./components/CompatibilityTable";
 import PnlYoY from "./components/PnlYoY";
 import TankerMap from "./components/TankerMap";
 import LiveRateBadge from "./components/LiveRateBadge";
+import HistoricalCurrency from "./components/HistoricalCurrency";
 
 const LAST_UPDATED = "7 Jul 2026, 20:45 IST";
 
@@ -100,8 +100,8 @@ export default function FuelLedgerDashboard() {
           </div>
         </div>
 
-        {/* Daily Logger */}
-        <DailyDataLogger key={`logger-${refreshKey}`} />
+        {/* Historical Currency Data (replaces Daily Data Logger) */}
+        <HistoricalCurrency />
 
         {/* E20 Impact + Compatibility */}
         <div className="grid lg:grid-cols-5 gap-6">
