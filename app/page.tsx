@@ -9,6 +9,7 @@ import E20Impact from "./components/E20Impact";
 import CompatibilityTable from "./components/CompatibilityTable";
 import PnlYoY from "./components/PnlYoY";
 import TankerMap from "./components/TankerMap";
+import LiveRateBadge from "./components/LiveRateBadge";
 
 const LAST_UPDATED = "7 Jul 2026, 20:45 IST";
 
@@ -82,6 +83,7 @@ export default function FuelLedgerDashboard() {
               <div className="text-xs text-slate-400">OMC Profit Growth</div>
               <div className="text-2xl font-semibold tabular-nums tracking-tight text-emerald-400">+130%</div>
             </div>
+            <LiveRateBadge />
           </div>
         </div>
 

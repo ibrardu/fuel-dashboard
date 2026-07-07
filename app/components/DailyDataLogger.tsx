@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, Plus, Trash2 } from "lucide-react";
+import { Calendar, Plus, Trash2, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { DailyLog, formatDate, generateId, loadLogs, saveLogs } from "@/lib/utils";
 
@@ -17,6 +17,41 @@ export default function DailyDataLogger() {
   const [usdInr, setUsdInr] = useState(83.4);
   const [blendedCost, setBlendedCost] = useState(94.5);
   const [notes, setNotes] = useState("");
+  const [isFetchingRate, setIsFetchingRate] = useState(false);
+  const [rateSource, setRateSource] = useState<string | null>(null);
+
+  // Live USD/INR from free public API (no key required)
+  const fetchLiveUsdInr = async () => {
+    setIsFetchingRate(true);
+    try {
+      const res = await fetch("https://open.er-api.com/v6/latest/USD", {
+        // cache: 'no-store' not needed for client fetch in this context
+      });
+      if (!res.ok) throw new Error("Failed to fetch");
+      const data = await res.json();
+      const rate = data?.rates?.INR;
+      if (typeof rate === "number") {
+        setUsdInr(parseFloat(rate.toFixed(2)));
+        setRateSource("live");
+        toast.success("Live USD/INR rate loaded", {
+          description: `₹${rate.toFixed(2)} (open.er-api.com)`,
+        });
+      } else {
+        throw new Error("Invalid rate data");
+      }
+    } catch (err) {
+      console.error(err);
+      // Fallback to a reasonable default
+      const fallback = 83.65;
+      setUsdInr(fallback);
+      setRateSource("fallback");
+      toast.error("Could not fetch live rate", {
+        description: `Using fallback ₹${fallback}. Check your connection.`,
+      });
+    } finally {
+      setIsFetchingRate(false);
+    }
+  };
 
   const addLog = () => {
     const newLog: DailyLog = {
@@ -60,7 +95,7 @@ export default function DailyDataLogger() {
           <h2 className="section-title flex items-center gap-2">
             <Calendar className="h-5 w-5 text-emerald-500" /> Daily Data Logger
           </h2>
-          <p className="subtle">Persist to browser (localStorage). For personal / team demo use.</p>
+          <p className="subtle">Persist to browser (localStorage). Click <span className="font-medium text-emerald-400">Live</span> to pull current USD/INR from market.</p>
         </div>
       </div>
 
@@ -77,14 +112,32 @@ export default function DailyDataLogger() {
           />
         </div>
         <div>
-          <label className="text-xs text-slate-400 block mb-1">USD / INR</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-xs text-slate-400">USD / INR</label>
+            <button
+              type="button"
+              onClick={fetchLiveUsdInr}
+              disabled={isFetchingRate}
+              className="text-[10px] flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 disabled:opacity-60"
+              title="Fetch live market rate"
+            >
+              <RefreshCw className={`h-3 w-3 ${isFetchingRate ? "animate-spin" : ""}`} />
+              {isFetchingRate ? "Fetching..." : "Live"}
+            </button>
+          </div>
           <input
             type="number"
             step="0.01"
             value={usdInr}
-            onChange={(e) => setUsdInr(parseFloat(e.target.value) || 0)}
+            onChange={(e) => {
+              setUsdInr(parseFloat(e.target.value) || 0);
+              setRateSource(null); // manual override clears live marker
+            }}
             className="input w-full"
           />
+          {rateSource === "live" && (
+            <div className="text-[10px] text-emerald-400 mt-0.5">✓ live market</div>
+          )}
         </div>
         <div>
           <label className="text-xs text-slate-400 block mb-1">Blended Cost (₹/L)</label>
@@ -160,7 +213,9 @@ export default function DailyDataLogger() {
         </div>
       )}
 
-      <p className="source">Data stored locally in your browser only. Clear browser data or use “Clear” to reset.</p>
+      <p className="source">
+        Data stored locally in your browser only. USD/INR pulls from open.er-api.com (free public market data). Clear browser data or use “Clear” to reset.
+      </p>
     </div>
   );
 }
