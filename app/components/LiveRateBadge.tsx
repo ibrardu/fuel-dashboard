@@ -1,37 +1,65 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { RefreshCw, DollarSign } from "lucide-react";
 import { toast } from "sonner";
+import { fetchUsdInrRate } from "@/lib/utils";
 
 export default function LiveRateBadge() {
   const [rate, setRate] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
 
-  const fetchRate = async () => {
+  const hasAutoLoaded = useRef(false);
+
+  const loadRate = async (showToast = false) => {
     setLoading(true);
-    try {
-      const res = await fetch("https://open.er-api.com/v6/latest/USD");
-      if (!res.ok) throw new Error("Network error");
-      const data = await res.json();
-      const inr = data?.rates?.INR;
-      if (typeof inr === "number") {
-        const rounded = parseFloat(inr.toFixed(2));
-        setRate(rounded);
-        setUpdatedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
-        toast.success(`Live USD/INR: ₹${rounded}`);
-      } else {
-        throw new Error("Bad payload");
+    const liveRate = await fetchUsdInrRate();
+
+    if (liveRate !== null) {
+      setRate(liveRate);
+      setUpdatedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+      if (showToast) {
+        toast.success(`Live USD/INR: ₹${liveRate}`);
       }
-    } catch {
-      toast.error("Failed to fetch live rate");
-      // keep previous or set fallback
-      if (!rate) setRate(83.6);
-    } finally {
-      setLoading(false);
+    } else {
+      if (showToast) {
+        toast.error("Failed to fetch live rate");
+      }
+      // Fallback only if we have nothing
+      if (rate === null) {
+        setRate(95.53);
+        setUpdatedAt("fallback");
+      }
     }
+    setLoading(false);
   };
+
+  // Auto-fetch on mount so the top KPI always shows a current value.
+  // Using a ref guard + direct async call to satisfy strict lint rules.
+  useEffect(() => {
+    if (hasAutoLoaded.current) return;
+    hasAutoLoaded.current = true;
+
+    (async () => {
+      setLoading(true);
+      const liveRate = await fetchUsdInrRate();
+
+      if (liveRate !== null) {
+        setRate(liveRate);
+        setUpdatedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+      } else {
+        if (rate === null) {
+          setRate(95.53);
+          setUpdatedAt("fallback");
+        }
+      }
+      setLoading(false);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const refreshRate = () => loadRate(true);
 
   return (
     <div className="kpi min-w-[118px] flex flex-col justify-between">
@@ -40,7 +68,7 @@ export default function LiveRateBadge() {
           <DollarSign className="h-3.5 w-3.5" /> USD/INR
         </div>
         <button
-          onClick={fetchRate}
+          onClick={refreshRate}
           disabled={loading}
           className="p-1 rounded hover:bg-slate-800 text-slate-400 hover:text-white disabled:opacity-50"
           title="Refresh live rate"
@@ -49,10 +77,10 @@ export default function LiveRateBadge() {
         </button>
       </div>
       <div className="text-2xl font-semibold tabular-nums tracking-tight mt-1">
-        {rate ? `₹${rate}` : "—"}
+        {loading && rate === null ? "..." : rate ? `₹${rate}` : "—"}
       </div>
       <div className="text-[10px] text-slate-500 mt-0.5">
-        {updatedAt ? `as of ${updatedAt}` : "click to load live"}
+        {loading ? "updating..." : updatedAt ? `as of ${updatedAt}` : "live rate"}
       </div>
     </div>
   );

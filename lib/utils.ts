@@ -45,3 +45,19 @@ export function saveLogs(logs: DailyLog[]) {
 export function generateId(): string {
   return Math.random().toString(36).slice(2, 11);
 }
+
+// Shared live USD/INR fetch — used by both KPI badge and Historical Currency section
+export async function fetchUsdInrRate(): Promise<number | null> {
+  try {
+    const res = await fetch("https://open.er-api.com/v6/latest/USD");
+    if (!res.ok) return null;
+    const data = await res.json();
+    const rate = data?.rates?.INR;
+    if (typeof rate === "number") {
+      return parseFloat(rate.toFixed(2));
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
