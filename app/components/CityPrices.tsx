@@ -30,31 +30,37 @@ export default function CityPrices() {
         <div className="badge badge-green">E20 Retail</div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>City</th>
-              <th className="text-right">Petrol (₹/L)</th>
-              <th className="text-right">Blended cost to OMC</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cityPrices.map((row) => (
-              <tr key={row.city}>
-                <td className="font-medium text-white">{row.city}</td>
-                <td className="text-right font-mono">{row.petrol.toFixed(2)}</td>
-                <td className="text-right font-mono text-emerald-400">
-                  ~{row.blended.toFixed(2)} /L
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {cityPrices.map((city) => (
+          <div
+            key={city.city}
+            className="border border-slate-700 rounded-xl p-4 bg-slate-950 hover:border-slate-600 transition"
+          >
+            <div className="font-semibold text-lg tracking-tight text-white mb-1">
+              {city.city}
+            </div>
+
+            <div className="text-3xl font-semibold font-mono tracking-tighter text-white">
+              ₹{city.petrol.toFixed(2)}
+            </div>
+            <div className="text-xs text-slate-400 -mt-0.5 mb-2">Petrol (₹/L)</div>
+
+            <div className="text-sm">
+              <span className="text-slate-300">Blended cost to OMC: </span>
+              <span className="font-mono text-emerald-400 font-medium">
+                ~₹{city.blended.toFixed(2)} /L
+              </span>
+            </div>
+
+            <div className="mt-2 text-[10px] text-slate-500">
+              Source: PPAC.gov.in
+            </div>
+          </div>
+        ))}
       </div>
 
-      <p className="source">
-        Source: PPAC.gov.in • Prices as of 7 Jul 2026. Retail prices include taxes; blended cost reflects OMC procurement after 20% ethanol mixing.
+      <p className="source mt-4">
+        Prices as of 7 Jul 2026. Retail prices include taxes &amp; margins; blended cost is the estimated OMC procurement cost after 20% ethanol.
       </p>
     </div>
   );
