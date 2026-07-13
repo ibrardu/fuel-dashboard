@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Fuel, RefreshCw, ExternalLink } from "lucide-react";
+import { format } from "date-fns";
 import CityPrices from "./components/CityPrices";
 import InteractiveCalculator from "./components/InteractiveCalculator";
 import E20Impact from "./components/E20Impact";
@@ -11,9 +12,9 @@ import TankerMap from "./components/TankerMap";
 import LiveRateBadge from "./components/LiveRateBadge";
 import HistoricalCurrency from "./components/HistoricalCurrency";
 
-const LAST_UPDATED = "7 Jul 2026, 20:45 IST";
-
 export default function FuelLedgerDashboard() {
+  // Use a fixed simulation date (2026-07-13) so the header is always correct in this demo
+  const LAST_UPDATED = format(new Date("2026-07-13T09:15:00"), "d MMM yyyy, HH:mm") + " IST";
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleRefresh = () => {
@@ -73,7 +74,7 @@ export default function FuelLedgerDashboard() {
           <div className="flex gap-3 flex-wrap">
             <div className="kpi min-w-[118px]">
               <div className="text-xs text-slate-400">Avg Petrol (Delhi)</div>
-              <div className="text-2xl font-semibold tabular-nums tracking-tight">₹102.12</div>
+              <div className="text-2xl font-semibold tabular-nums tracking-tight">₹102.45</div>
             </div>
             <div className="kpi min-w-[118px]">
               <div className="text-xs text-slate-400">Current Blend</div>
