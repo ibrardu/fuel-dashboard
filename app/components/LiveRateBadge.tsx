@@ -50,7 +50,7 @@ export default function LiveRateBadge() {
         setUpdatedAt(new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
       } else {
         if (rate === null) {
-          setRate(95.53);
+          setRate(83.92);
           setUpdatedAt("fallback");
         }
       }
