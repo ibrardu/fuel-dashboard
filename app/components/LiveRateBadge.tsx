@@ -28,7 +28,7 @@ export default function LiveRateBadge() {
       }
       // Fallback only if we have nothing
       if (rate === null) {
-        setRate(95.53);
+        setRate(83.92);
         setUpdatedAt("fallback");
       }
     }

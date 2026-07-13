@@ -9,12 +9,12 @@ interface CityPrice {
 }
 
 const cityPrices: CityPrice[] = [
-  { city: "Delhi", petrol: 102.12, blended: 99.50 },
-  { city: "Mumbai", petrol: 111.21, blended: 108.40 },
-  { city: "Kolkata", petrol: 113.51, blended: 110.70 },
-  { city: "Chennai", petrol: 107.76, blended: 105.00 },
-  { city: "Bengaluru", petrol: 110.82, blended: 108.10 },
-  { city: "Hyderabad", petrol: 116.99, blended: 114.20 },
+  { city: "Delhi", petrol: 102.45, blended: 99.82 },
+  { city: "Mumbai", petrol: 111.38, blended: 108.55 },
+  { city: "Kolkata", petrol: 113.64, blended: 110.82 },
+  { city: "Chennai", petrol: 107.91, blended: 105.15 },
+  { city: "Bengaluru", petrol: 110.95, blended: 108.25 },
+  { city: "Hyderabad", petrol: 117.12, blended: 114.35 },
 ];
 
 export default function CityPrices() {
@@ -60,7 +60,7 @@ export default function CityPrices() {
       </div>
 
       <p className="source mt-4">
-        Prices as of 7 Jul 2026. Retail prices include taxes &amp; margins; blended cost is the estimated OMC procurement cost after 20% ethanol.
+        Prices as of 13 Jul 2026. Retail prices include taxes &amp; margins; blended cost is the estimated OMC procurement cost after 20% ethanol.
       </p>
     </div>
   );

@@ -12,24 +12,27 @@ interface CurrencyPoint {
   rate: number;
 }
 
-// Generate realistic sample historical USD/INR data (May - early July 2026)
+// Generate realistic sample historical USD/INR data (last ~50 days up to today)
 function generateSampleData(): CurrencyPoint[] {
   const data: CurrencyPoint[] = [];
-  let rate = 95.53; // Start near current live rate
-  const startDate = new Date("2026-05-20");
+  // Use a realistic base rate for mid-2026 demo (will be overridden by live fetch when available)
+  let rate = 83.85;
+  const today = new Date("2026-07-13");
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - 49);
 
-  for (let i = 0; i < 49; i++) {
+  for (let i = 0; i < 50; i++) {
     const d = new Date(startDate);
     d.setDate(d.getDate() + i);
 
-    // Gentle random walk around current levels (~95.53)
-    const change = (Math.random() - 0.48) * 0.28;
+    // Gentle random walk
+    const change = (Math.random() - 0.48) * 0.22;
     rate = rate + change;
-    rate = Math.max(94.5, Math.min(96.5, rate));
+    rate = Math.max(82.8, Math.min(85.2, rate));
 
-    // Add a couple of bigger moves to make it interesting
-    if (i === 18) rate += 0.42;
-    if (i === 32) rate -= 0.38;
+    // Occasional moves
+    if (i === 22) rate += 0.35;
+    if (i === 37) rate -= 0.29;
 
     data.push({
       date: d.toISOString().split("T")[0],
@@ -37,9 +40,9 @@ function generateSampleData(): CurrencyPoint[] {
     });
   }
 
-  // Ensure the latest point reflects the current reported live rate
+  // Ensure the latest point is the "current" simulated rate (will be synced with live on load)
   if (data.length > 0) {
-    data[data.length - 1].rate = 95.53;
+    data[data.length - 1].rate = 83.92;
   }
 
   return data;
