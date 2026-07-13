@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Fuel, RefreshCw, ExternalLink } from "lucide-react";
+import { format } from "date-fns";
 import CityPrices from "./components/CityPrices";
 import InteractiveCalculator from "./components/InteractiveCalculator";
 import E20Impact from "./components/E20Impact";
@@ -10,9 +11,9 @@ import PnlYoY from "./components/PnlYoY";
 import TankerMap from "./components/TankerMap";
 import HistoricalCurrency from "./components/HistoricalCurrency";
 
-const LAST_UPDATED = "7 Jul 2026, 20:45 IST";
-
 export default function FuelLedgerDashboard() {
+  // Use a fixed simulation date (2026-07-13) so the header is always correct in this demo
+  const LAST_UPDATED = format(new Date("2026-07-13T09:15:00"), "d MMM yyyy, HH:mm") + " IST";
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleRefresh = () => {

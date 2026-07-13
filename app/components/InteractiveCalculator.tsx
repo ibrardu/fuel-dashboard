@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Calculator, TrendingDown } from "lucide-react";
 
 export default function InteractiveCalculator() {
-  const [basePetrol, setBasePetrol] = useState(102.5); // Rs/L ex-refinery or retail proxy
+  const [basePetrol, setBasePetrol] = useState(102.45); // Rs/L ex-refinery or retail proxy (Delhi)
   const [ethanolPrice, setEthanolPrice] = useState(65.0); // Typical OMC buy price for ethanol
   const [blendPercent, setBlendPercent] = useState(20);
 
