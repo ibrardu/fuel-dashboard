@@ -31,6 +31,18 @@ export interface WaterfallInput {
   fair: number;
 }
 
+/** Full cost breakdown for one city — the location-aware unit the UI switches on. */
+export interface CityDetail extends CostBreakdown {
+  id: number;
+  name: string;
+  state: string;
+  lat: number;
+  lng: number;
+  quoted: number;
+  basePrice: number;
+  waterfall: WaterfallInput;
+}
+
 export interface DashboardModel {
   asOf: string;
   blendPct: number;
@@ -40,6 +52,9 @@ export interface DashboardModel {
   delhi: CostBreakdown & { quoted: number; basePrice: number };
   waterfall: WaterfallInput;
   cities: CityRow[];
+  cityDetails: CityDetail[];
+  /** Real blended feedstock cost, ₹/L — national, identical across cities. */
+  nationalBlendedCost: number;
   trend: TrendPoint[];
   kmPerYear: number;
   kmplE0: number;
@@ -146,6 +161,26 @@ export function buildDashboardModel(data: DashboardData): DashboardModel {
       gap: cost.gap,
       effective: cost.effective_retail,
     })),
+    cityDetails: cityModels.map(({ city, buildup, quoted, cost }) => ({
+      ...cost,
+      id: city.id,
+      name: city.name,
+      state: city.state,
+      lat: Number(city.lat),
+      lng: Number(city.lng),
+      quoted,
+      basePrice: Number(buildup.base_price),
+      waterfall: {
+        base: Number(buildup.base_price),
+        freight: Number(buildup.freight),
+        dealer: Number(buildup.dealer_commission),
+        excise: Number(buildup.central_excise),
+        vat: cost.vat,
+        quoted,
+        fair: cost.fair_retail,
+      },
+    })),
+    nationalBlendedCost: delhi.cost.blended_base,
     trend,
     kmPerYear: assumption(data, "two_wheeler_km_per_year", 10000),
     kmplE0: assumption(data, "two_wheeler_kmpl_e0", 50),

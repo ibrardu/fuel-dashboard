@@ -63,7 +63,7 @@ export default function RealCostTrend({ trend }: { trend: TrendPoint[] }) {
     <div className="card">
       <div className="card-header">
         <h2 className="section-title">Real Cost Trend</h2>
-        <span className="badge badge-slate">{days}-day · Delhi</span>
+        <span className="badge badge-slate">{days}-day · national build-up</span>
       </div>
 
       <div className="mb-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-400">

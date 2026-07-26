@@ -1,19 +1,30 @@
-import type { DashboardModel } from "@/lib/model";
+import type { CityDetail } from "@/lib/model";
 
 interface Kpi {
   label: string;
   value: string;
   sub: string;
   hero?: boolean;
+  saffron?: boolean;
   /** Hidden on mobile because the MobileHero card already shows it. */
   desktopOnly?: boolean;
 }
 
-export default function KpiStrip({ model }: { model: DashboardModel }) {
-  const { delhi, blendPct, ethanolPrice, crude } = model;
-  const blended = delhi.blended_base;
-  const discountPct = Math.round((1 - blended / delhi.quoted) * 100);
-  const spread = delhi.quoted - blended;
+export default function KpiStrip({
+  activeCity,
+  nationalBlendedCost,
+  ethanolPrice,
+  blendPct,
+  crude,
+}: {
+  activeCity: CityDetail;
+  nationalBlendedCost: number;
+  ethanolPrice: number;
+  blendPct: number;
+  crude: { usd: number; inr: number; date: string } | null;
+}) {
+  const discountPct = Math.round((1 - nationalBlendedCost / activeCity.quoted) * 100);
+  const spread = activeCity.quoted - nationalBlendedCost;
 
   const kpis: Kpi[] = [
     {
@@ -22,8 +33,8 @@ export default function KpiStrip({ model }: { model: DashboardModel }) {
       sub: crude ? `USD/INR ${crude.inr.toFixed(2)}` : "no data",
     },
     {
-      label: "Delhi Petrol RSP",
-      value: `₹${delhi.quoted.toFixed(2)}`,
+      label: `${activeCity.name} Petrol RSP`,
+      value: `₹${activeCity.quoted.toFixed(2)}`,
       sub: "quoted at the pump",
     },
     {
@@ -38,7 +49,7 @@ export default function KpiStrip({ model }: { model: DashboardModel }) {
     },
     {
       label: "Real Blended Cost",
-      value: `₹${blended.toFixed(2)}/L`,
+      value: `₹${nationalBlendedCost.toFixed(2)}/L`,
       sub: `−${discountPct}% vs pump price`,
       hero: true,
       desktopOnly: true,
@@ -48,6 +59,7 @@ export default function KpiStrip({ model }: { model: DashboardModel }) {
       value: `₹${spread.toFixed(2)}/L`,
       sub: "pump − feedstock, incl. taxes",
       desktopOnly: true,
+      saffron: true,
     },
   ];
 
@@ -60,22 +72,31 @@ export default function KpiStrip({ model }: { model: DashboardModel }) {
             className={[
               "kpi",
               kpi.hero ? "kpi-hero" : "",
+              kpi.saffron ? "border-amber-500/30" : "",
               kpi.desktopOnly ? "hidden lg:block" : "",
             ].join(" ")}
           >
-            <div className={`kpi-label ${kpi.hero ? "text-emerald-400/80" : ""}`}>
+            <div
+              className={`kpi-label ${kpi.hero ? "text-emerald-400/80" : kpi.saffron ? "text-amber-400/80" : ""}`}
+            >
               {kpi.label}
             </div>
             <div
               className={
                 kpi.hero
                   ? "mt-1 text-2xl font-bold tabular-nums tracking-tight text-emerald-300"
-                  : "kpi-value"
+                  : kpi.saffron
+                    ? "kpi-value text-amber-300"
+                    : "kpi-value"
               }
             >
               {kpi.value}
             </div>
-            <div className={`kpi-sub ${kpi.hero ? "text-emerald-400/70" : ""}`}>{kpi.sub}</div>
+            <div
+              className={`kpi-sub ${kpi.hero ? "text-emerald-400/70" : kpi.saffron ? "text-amber-400/60" : ""}`}
+            >
+              {kpi.sub}
+            </div>
           </div>
         ))}
       </div>

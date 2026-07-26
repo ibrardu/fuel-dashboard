@@ -7,6 +7,9 @@ export interface City {
   state: string;
   /** Ad-valorem VAT rate on the pre-VAT price, e.g. 0.194 for Delhi. */
   vat_rate: number;
+  /** Decimal degrees — used for nearest-city geolocation matching. */
+  lat: number;
+  lng: number;
 }
 
 export interface FuelPrice {

@@ -1,11 +1,18 @@
 import { MapPin } from "lucide-react";
-import type { DashboardModel } from "@/lib/model";
+import type { CityDetail } from "@/lib/model";
 
-/** Quoted RSP vs real blended input cost per metro. Table on desktop, list rows on mobile. */
-export default function CityPrices({ model }: { model: DashboardModel }) {
-  const blended = model.delhi.blended_base; // national feedstock cost; RSP varies by state VAT
-  const rows = model.cities
-    .map((c) => ({ ...c, discount: Math.round((1 - blended / c.quoted) * 100) }))
+/** Quoted RSP vs real blended input cost per city. Table on desktop, list rows on mobile. */
+export default function CityPrices({
+  cities,
+  nationalBlendedCost,
+  activeCityId,
+}: {
+  cities: CityDetail[];
+  nationalBlendedCost: number;
+  activeCityId: number;
+}) {
+  const rows = cities
+    .map((c) => ({ ...c, discount: Math.round((1 - nationalBlendedCost / c.quoted) * 100) }))
     .sort((a, b) => b.quoted - a.quoted);
 
   return (
@@ -14,11 +21,11 @@ export default function CityPrices({ model }: { model: DashboardModel }) {
         <h2 className="section-title flex items-center gap-2">
           <MapPin className="h-4 w-4 text-emerald-400" /> City Prices
         </h2>
-        <span className="badge badge-slate">metro RSP vs real cost</span>
+        <span className="badge badge-slate">{cities.length} cities · pump vs real cost</span>
       </div>
 
       {/* Desktop table */}
-      <div className="hidden overflow-x-auto sm:block">
+      <div className="hidden max-h-[420px] overflow-y-auto sm:block">
         <table className="table">
           <thead>
             <tr>
@@ -30,13 +37,18 @@ export default function CityPrices({ model }: { model: DashboardModel }) {
           </thead>
           <tbody>
             {rows.map((c) => (
-              <tr key={c.name}>
+              <tr key={c.name} className={c.id === activeCityId ? "bg-emerald-500/[0.06]" : ""}>
                 <td>
-                  <span className="font-medium text-white">{c.name}</span>
+                  <span className="inline-flex items-center gap-1.5 font-medium text-white">
+                    {c.id === activeCityId && <MapPin className="h-3 w-3 text-emerald-400" />}
+                    {c.name}
+                  </span>
                   <span className="ml-2 hidden text-xs text-slate-500 md:inline">{c.state}</span>
                 </td>
                 <td className="text-right">₹{c.quoted.toFixed(2)}</td>
-                <td className="text-right font-semibold text-emerald-300">₹{blended.toFixed(2)}</td>
+                <td className="text-right font-semibold text-emerald-300">
+                  ₹{nationalBlendedCost.toFixed(2)}
+                </td>
                 <td className="text-right">
                   <span className="badge badge-green">−{c.discount}%</span>
                 </td>
@@ -47,18 +59,24 @@ export default function CityPrices({ model }: { model: DashboardModel }) {
       </div>
 
       {/* Mobile list rows */}
-      <ul className="divide-y divide-white/[0.05] sm:hidden">
+      <ul className="max-h-[420px] divide-y divide-white/[0.05] overflow-y-auto sm:hidden">
         {rows.map((c) => (
-          <li key={c.name} className="flex items-center justify-between gap-3 py-3">
+          <li
+            key={c.name}
+            className={`flex items-center justify-between gap-3 py-3 ${c.id === activeCityId ? "bg-emerald-500/[0.06]" : ""}`}
+          >
             <div className="min-w-0">
-              <div className="truncate text-sm font-medium text-white">{c.name}</div>
+              <div className="flex items-center gap-1.5 truncate text-sm font-medium text-white">
+                {c.id === activeCityId && <MapPin className="h-3 w-3 shrink-0 text-emerald-400" />}
+                {c.name}
+              </div>
               <div className="text-[11px] tabular-nums text-slate-500">
                 pump ₹{c.quoted.toFixed(2)}
               </div>
             </div>
             <div className="flex items-center gap-2.5">
               <span className="text-sm font-semibold tabular-nums text-emerald-300">
-                ₹{blended.toFixed(2)}
+                ₹{nationalBlendedCost.toFixed(2)}
               </span>
               <span className="badge badge-green">−{c.discount}%</span>
             </div>
@@ -67,8 +85,8 @@ export default function CityPrices({ model }: { model: DashboardModel }) {
       </ul>
 
       <p className="source">
-        Real cost is the national blended feedstock (₹{blended.toFixed(2)}/L); pump prices differ
-        because state VAT differs — not because the fuel does.
+        Real cost is the national blended feedstock (₹{nationalBlendedCost.toFixed(2)}/L); pump
+        prices differ because state VAT differs — not because the fuel does.
       </p>
     </div>
   );

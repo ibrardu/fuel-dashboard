@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FuelLedger | India E20 Real Cost Dashboard",
+  title: "FuelLedger – India E20 Real Cost Dashboard",
   description:
     "The quoted petrol price vs the real blended feedstock cost of E20: PPAC price build-up, ethanol economics, OMC margins, and the per-litre gap.",
   icons: {

@@ -8,7 +8,7 @@
 @theme inline {
   /* FuelLedger dark fintech theme */
   --color-background: #0b1120;
-  --color-surface: #101a2e;
+  --color-surface: #111827;
   --color-surface-2: #16213a;
   --color-foreground: #e2e8f0;
   --color-accent: #10b981;
@@ -30,11 +30,11 @@ body {
 /* ---------- Cards ---------- */
 
 .card {
-  @apply rounded-[20px] border border-white/[0.06] bg-[#101a2e]/90 p-6 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_10px_30px_-12px_rgba(0,0,0,0.5)];
+  @apply rounded-2xl border border-white/[0.06] bg-[#111827]/90 p-6 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset,0_10px_30px_-12px_rgba(0,0,0,0.5)];
 }
 
 .card-hero {
-  @apply relative overflow-hidden rounded-[20px] border border-emerald-500/25 bg-gradient-to-br from-emerald-500/[0.10] via-[#101a2e] to-[#101a2e] shadow-[0_0_0_1px_rgba(16,185,129,0.08),0_0_60px_-18px_rgba(16,185,129,0.45)];
+  @apply relative overflow-hidden rounded-2xl border border-emerald-500/25 bg-gradient-to-br from-emerald-500/[0.10] via-[#111827] to-[#111827] shadow-[0_0_0_1px_rgba(16,185,129,0.08),0_0_60px_-18px_rgba(16,185,129,0.45)];
 }
 
 .card-header {
@@ -56,7 +56,7 @@ body {
 /* ---------- KPI tiles ---------- */
 
 .kpi {
-  @apply rounded-2xl border border-white/[0.06] bg-[#101a2e]/90 px-4 py-3;
+  @apply rounded-2xl border border-white/[0.06] bg-[#111827]/90 px-4 py-3;
 }
 
 .kpi-label {
@@ -193,20 +193,4 @@ body {
 
 .btn-primary {
   @apply border-emerald-500 bg-emerald-600 text-white hover:bg-emerald-500;
-}
-
-.stat {
-  @apply kpi;
-}
-
-.stat-label {
-  @apply kpi-label;
-}
-
-.stat-value {
-  @apply kpi-value;
-}
-
-.stat-sub {
-  @apply kpi-sub;
 }
