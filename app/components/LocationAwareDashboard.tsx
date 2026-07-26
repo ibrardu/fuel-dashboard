@@ -93,7 +93,7 @@ export default function LocationAwareDashboard({
       />
 
       <main className="mx-auto max-w-[1400px] space-y-4 px-4 pb-24 pt-4 sm:px-6 lg:space-y-5 lg:pb-10">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-white/[0.06] bg-[#111827]/60 px-4 py-2.5 text-xs">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl border border-white/[0.06] bg-surface/60 px-4 py-2.5 text-xs">
           <span className="inline-flex items-center gap-1.5 text-slate-300">
             <MapPin className="h-3.5 w-3.5 text-emerald-400" />
             Showing <span className="font-semibold text-white">{activeCity.name}</span>
@@ -116,7 +116,7 @@ export default function LocationAwareDashboard({
               <select
                 value={selectedCityId}
                 onChange={(e) => selectCity(Number(e.target.value))}
-                className="appearance-none rounded-lg border border-white/10 bg-[#0b1120] py-1 pl-2.5 pr-6 text-xs font-medium text-slate-200 focus:border-emerald-500/50 focus:outline-none"
+                className="appearance-none rounded-lg border border-white/10 bg-background py-1 pl-2.5 pr-6 text-xs font-medium text-slate-200 focus:border-emerald-500/50 focus:outline-none"
               >
                 {cities.map((c) => (
                   <option key={c.id} value={c.id}>

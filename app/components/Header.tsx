@@ -1,9 +1,10 @@
 import { Fuel } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Header({ asOf, source }: { asOf: string; source: string }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#0b1120]/85 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_24px_-4px_rgba(16,185,129,0.7)]">
@@ -34,6 +35,7 @@ export default function Header({ asOf, source }: { asOf: string; source: string 
             </span>
             {source === "supabase" ? "Live" : "Live · seed"}
           </span>
+          <ThemeToggle />
         </div>
       </div>
     </header>

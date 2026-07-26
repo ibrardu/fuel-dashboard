@@ -72,6 +72,14 @@ const CITY_FREIGHT: Record<number, number> = {
   14: 0.55,
 };
 
+// Diesel isn't E20 ethanol-blended (that mandate is petrol-only), so it has
+// no "real cost" model — this is a reference retail series only, at a
+// uniform illustrative diesel/petrol ratio.
+const DIESEL_RATIO = 0.89;
+const CITY_DIESEL: Record<number, number> = Object.fromEntries(
+  Object.entries(CITY_RETAIL).map(([id, retail]) => [id, Math.round(retail * DIESEL_RATIO * 100) / 100])
+) as Record<number, number>;
+
 const DEALER_COMMISSION = 3.77;
 const CENTRAL_EXCISE = 19.9;
 const LATEST_BUILDUP_DATE = "2026-07-20";
@@ -93,7 +101,7 @@ export const SEED_FUEL_PRICES: FuelPrice[] = SEED_CITIES.flatMap((city) =>
     city_id: city.id,
     date: addDays(HISTORY_END, i - (HISTORY_DAYS - 1)),
     petrol_retail: CITY_RETAIL[city.id],
-    diesel_retail: null,
+    diesel_retail: CITY_DIESEL[city.id],
     source_url: PPAC,
   }))
 );

@@ -19,6 +19,8 @@ export interface TrendPoint {
   fair: number;
   /** Real blended feedstock cost, ₹/L: (1−p)·base + p·ethanol. */
   blended: number;
+  /** Diesel retail, ₹/L — reference only, not ethanol-blended. */
+  diesel: number | null;
 }
 
 export interface WaterfallInput {
@@ -39,6 +41,8 @@ export interface CityDetail extends CostBreakdown {
   lat: number;
   lng: number;
   quoted: number;
+  /** Diesel retail, ₹/L — reference only, not ethanol-blended. */
+  dieselRetail: number | null;
   basePrice: number;
   waterfall: WaterfallInput;
 }
@@ -74,6 +78,14 @@ function quotedRetailFor(data: DashboardData, cityId: number, onOrBefore?: strin
   return (prices.at(-1) ?? data.fuel_prices.filter((p) => p.city_id === cityId).at(0))?.petrol_retail;
 }
 
+function dieselRetailFor(data: DashboardData, cityId: number, onOrBefore?: string): number | null {
+  const prices = data.fuel_prices
+    .filter((p) => p.city_id === cityId && (!onOrBefore || p.date <= onOrBefore))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  const row = prices.at(-1) ?? data.fuel_prices.filter((p) => p.city_id === cityId).at(0);
+  return row?.diesel_retail != null ? Number(row.diesel_retail) : null;
+}
+
 export function assumption(data: DashboardData, key: string, fallback: number): number {
   const row = data.assumptions.find((a) => a.key === key);
   return row ? Number(row.value) : fallback;
@@ -93,6 +105,7 @@ export function buildDashboardModel(data: DashboardData): DashboardModel {
   const cityModels = data.cities.map((city) => {
     const buildup = latestBuildupFor(data, city.id)!;
     const quoted = quotedRetailFor(data, city.id) ?? 0;
+    const diesel = dieselRetailFor(data, city.id);
     const cost = computeCost({
       buildup: {
         base_price: Number(buildup.base_price),
@@ -106,7 +119,7 @@ export function buildDashboardModel(data: DashboardData): DashboardModel {
       blend_fraction: blendFraction,
       energy_factor: energyFactor,
     });
-    return { city, buildup, quoted, cost };
+    return { city, buildup, quoted, diesel, cost };
   });
 
   const delhi = cityModels.find((m) => m.city.name === "Delhi") ?? cityModels[0];
@@ -129,7 +142,8 @@ export function buildDashboardModel(data: DashboardData): DashboardModel {
         blend_fraction: blendFraction,
         energy_factor: energyFactor,
       });
-      return { date: b.date, quoted, fair: cost.fair_retail, blended: cost.blended_base };
+      const diesel = dieselRetailFor(data, delhi.city.id, b.date);
+      return { date: b.date, quoted, fair: cost.fair_retail, blended: cost.blended_base, diesel };
     });
 
   const latestCrude = [...data.crude_prices].sort((a, b) => a.date.localeCompare(b.date)).at(-1);
@@ -161,7 +175,7 @@ export function buildDashboardModel(data: DashboardData): DashboardModel {
       gap: cost.gap,
       effective: cost.effective_retail,
     })),
-    cityDetails: cityModels.map(({ city, buildup, quoted, cost }) => ({
+    cityDetails: cityModels.map(({ city, buildup, quoted, diesel, cost }) => ({
       ...cost,
       id: city.id,
       name: city.name,
@@ -169,6 +183,7 @@ export function buildDashboardModel(data: DashboardData): DashboardModel {
       lat: Number(city.lat),
       lng: Number(city.lng),
       quoted,
+      dieselRetail: diesel,
       basePrice: Number(buildup.base_price),
       waterfall: {
         base: Number(buildup.base_price),

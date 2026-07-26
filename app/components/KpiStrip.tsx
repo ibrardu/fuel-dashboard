@@ -64,7 +64,7 @@ export default function KpiStrip({
   ];
 
   return (
-    <div className="lg:sticky lg:top-16 lg:z-40 lg:border-b lg:border-white/[0.06] lg:bg-[#0b1120]/85 lg:backdrop-blur-xl">
+    <div className="lg:sticky lg:top-16 lg:z-40 lg:border-b lg:border-white/[0.06] lg:bg-background/85 lg:backdrop-blur-xl">
       <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-3 px-4 py-3 sm:px-6 lg:grid-cols-6">
         {kpis.map((kpi) => (
           <div

@@ -1,5 +1,6 @@
 import { getDashboardData } from "@/lib/supabase";
 import { buildDashboardModel } from "@/lib/model";
+import { fetchLiveUsdInr } from "@/lib/fx";
 import Header from "./components/Header";
 import LocationAwareDashboard from "./components/LocationAwareDashboard";
 import BottomNav from "./components/BottomNav";
@@ -10,6 +11,11 @@ export default async function Page() {
   const { data, source } = await getDashboardData();
   const model = buildDashboardModel(data);
   const defaultCityId = model.cityDetails.find((c) => c.name === "Delhi")?.id ?? model.cityDetails[0].id;
+
+  const liveUsdInr = await fetchLiveUsdInr();
+  if (liveUsdInr && model.crude) {
+    model.crude = { ...model.crude, inr: liveUsdInr };
+  }
 
   return (
     <div id="top" className="min-h-screen scroll-smooth">

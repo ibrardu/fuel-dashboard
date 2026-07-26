@@ -19,9 +19,11 @@ insert into cities (name, state, vat_rate, lat, lng) values
   ('Patna',      'Bihar',           0.2890, 25.59410, 85.13760);
 
 -- ~90 days of daily retail quotes per city (pump prices flat — that is the
--- story the trend chart tells)
+-- story the trend chart tells). Diesel isn't E20 ethanol-blended (that
+-- mandate is petrol-only), so it's a reference series at a uniform
+-- illustrative diesel/petrol ratio (0.89), not a "real cost" figure.
 insert into fuel_prices (city_id, date, petrol_retail, diesel_retail, source_url)
-select c.id, d::date, v.retail, null, 'https://ppac.gov.in/'
+select c.id, d::date, v.retail, round(v.retail * 0.89, 2), 'https://ppac.gov.in/'
 from (values
   ('Delhi',      102.12),
   ('Mumbai',     111.53),
