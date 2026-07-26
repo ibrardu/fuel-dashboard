@@ -1,86 +1,314 @@
 @import "tailwindcss";
 
-:root {
-  --font-sans: var(--font-geist-sans);
+/* ---------- Theme tokens ---------- */
+/* Dark is the default (no data-theme attribute yet, or explicitly "dark").
+   [data-theme="light"] overrides. ThemeToggle.tsx sets the attribute on
+   <html> and a blocking inline script in layout.tsx sets it before paint
+   to avoid a flash of the wrong theme. */
+
+:root,
+:root[data-theme="dark"] {
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
+
+  --bg: #0b1120;
+  --surface: #111827;
+  --surface-2: #16213a;
+  --surface-card: rgba(17, 24, 39, 0.9);
+
+  --text-primary: #ffffff;
+  --text-secondary: #e2e8f0;
+  --text-body: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-faint: #64748b;
+
+  --border: rgba(255, 255, 255, 0.06);
+  --border-soft: rgba(255, 255, 255, 0.04);
+  --border-strong: rgba(255, 255, 255, 0.1);
+  --hover: rgba(255, 255, 255, 0.02);
+  --hover-strong: rgba(255, 255, 255, 0.05);
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -12px rgba(0, 0, 0, 0.5);
+  --glow-1: rgba(16, 185, 129, 0.07);
+  --glow-2: rgba(245, 158, 11, 0.04);
+}
+
+:root[data-theme="light"] {
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --surface-card: rgba(255, 255, 255, 0.92);
+
+  --text-primary: #0f172a;
+  --text-secondary: #1e293b;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+
+  --border: rgba(15, 23, 42, 0.08);
+  --border-soft: rgba(15, 23, 42, 0.05);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --hover: rgba(15, 23, 42, 0.03);
+  --hover-strong: rgba(15, 23, 42, 0.06);
+
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 8px 24px -12px rgba(15, 23, 42, 0.1);
+  --glow-1: rgba(16, 185, 129, 0.06);
+  --glow-2: rgba(245, 158, 11, 0.05);
 }
 
 @theme inline {
-  --color-background: #020617;
-  --color-foreground: #e2e8f0;
-  --font-sans: var(--font-geist-sans);
+  /* FuelLedger fintech theme — runtime-switchable via the tokens above */
+  --color-background: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-foreground: var(--text-secondary);
+  --color-accent: #10b981;
+  --color-accent-soft: #34d399;
+  --color-saffron: #f59e0b;
+  --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  font-family: var(--font-geist-sans);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  background:
+    radial-gradient(1200px 500px at 70% -10%, var(--glow-1), transparent 60%),
+    radial-gradient(900px 400px at 0% 0%, var(--glow-2), transparent 55%),
+    var(--bg);
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
-/* Professional dark dashboard theme */
+/* ---------- Cards ---------- */
+
 .card {
-  @apply bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-sm;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+  box-shadow: var(--shadow-card);
+  @apply p-6;
+}
+
+.card-hero {
+  border-radius: 1rem;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.1), var(--surface), var(--surface));
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.08), 0 0 60px -18px rgba(16, 185, 129, 0.45);
+  @apply relative overflow-hidden;
 }
 
 .card-header {
-  @apply flex items-center justify-between mb-4;
+  @apply mb-4 flex items-center justify-between gap-3;
 }
 
 .section-title {
-  @apply text-xl font-semibold tracking-tight text-white mb-1;
+  color: var(--text-primary);
+  @apply text-base font-semibold tracking-tight;
 }
 
 .subtle {
-  @apply text-slate-400 text-sm;
+  color: var(--text-muted);
+  @apply text-sm;
 }
 
-.input {
-  @apply bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500 transition;
+.source {
+  color: var(--text-faint);
+  @apply mt-3 text-[10px] leading-relaxed;
 }
 
-.btn {
-  @apply px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-medium transition active:scale-[0.985];
+/* ---------- KPI tiles ---------- */
+
+.kpi {
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+  @apply px-4 py-3;
 }
 
-.btn-primary {
-  @apply bg-emerald-600 hover:bg-emerald-500 border-emerald-500 text-white;
+.kpi-label {
+  color: var(--text-faint);
+  @apply text-[10px] font-medium uppercase tracking-[0.12em];
 }
+
+.kpi-value {
+  color: var(--text-primary);
+  @apply mt-1 text-xl font-semibold tabular-nums tracking-tight;
+}
+
+.kpi-sub {
+  color: var(--text-faint);
+  @apply mt-0.5 text-[11px] tabular-nums;
+}
+
+.kpi-hero {
+  @apply border-emerald-500/40 bg-gradient-to-b from-emerald-500/[0.14] to-emerald-500/[0.03] shadow-[0_0_40px_-12px_rgba(16,185,129,0.55)];
+}
+
+/* ---------- Badges & pills ---------- */
+
+.badge {
+  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+}
+
+.badge-green {
+  @apply border border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300;
+}
+
+.badge-amber {
+  @apply border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300;
+}
+
+.badge-blue {
+  @apply border border-blue-500/30 bg-blue-500/10 text-blue-700 dark:text-blue-300;
+}
+
+.badge-slate {
+  border: 1px solid var(--border-strong);
+  background: var(--hover-strong);
+  color: var(--text-muted);
+  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+}
+
+/* ---------- Tables ---------- */
 
 .table {
   @apply w-full text-sm;
 }
 
 .table th {
-  @apply text-left font-medium text-slate-400 py-2 px-3 border-b border-slate-800;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-faint);
+  @apply px-3 py-2 text-left text-[11px] font-medium uppercase tracking-wider;
 }
 
 .table td {
-  @apply py-2 px-3 border-b border-slate-800 text-slate-300;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-body);
+  @apply px-3 py-2.5 tabular-nums;
 }
 
-.table tr:hover td {
-  @apply bg-slate-950/60;
+.table tr:last-child td {
+  @apply border-b-0;
 }
 
-.badge {
-  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+.table tbody tr:hover td {
+  background: var(--hover);
 }
 
-.badge-green {
-  @apply bg-emerald-950 text-emerald-400 border border-emerald-800;
+/* ---------- Range sliders ---------- */
+
+.slider {
+  @apply h-6 w-full cursor-pointer appearance-none bg-transparent;
+  --pct: 50%;
 }
 
-.badge-blue {
-  @apply bg-blue-950 text-blue-400 border border-blue-800;
+.slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    #10b981 0%,
+    #10b981 var(--pct),
+    var(--border-strong) var(--pct),
+    var(--border-strong) 100%
+  );
 }
 
-.badge-amber {
-  @apply bg-amber-950 text-amber-400 border border-amber-800;
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  margin-top: -8px;
+  height: 22px;
+  width: 22px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid #10b981;
+  box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.15), 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.15s ease;
 }
 
-.kpi {
-  @apply bg-slate-900 border border-slate-800 rounded-xl p-4;
+.slider:active::-webkit-slider-thumb,
+.slider:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 8px rgba(16, 185, 129, 0.22), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.source {
-  @apply text-[10px] text-slate-500 mt-2;
+.slider::-moz-range-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--border-strong);
+}
+
+.slider::-moz-range-progress {
+  height: 6px;
+  border-radius: 9999px;
+  background: #10b981;
+}
+
+.slider::-moz-range-thumb {
+  height: 22px;
+  width: 22px;
+  border-radius: 9999px;
+  background: #fff;
+  border: 3px solid #10b981;
+  box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.15), 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slider:focus {
+  outline: none;
+}
+
+/* ---------- Light-theme overrides for literal utility classes ---------- */
+/* Components apply a handful of Tailwind color utilities directly (not
+   through the classes above) for one-off text/border/background tinting.
+   These were authored dark-only; override them under light so text stays
+   legible and "dark surface" overlays (white/[x%]) become "dark-on-light"
+   overlays instead of disappearing. */
+
+[data-theme="light"] .text-white {
+  color: var(--text-primary);
+}
+[data-theme="light"] .text-slate-200 {
+  color: var(--text-secondary);
+}
+[data-theme="light"] .text-slate-300 {
+  color: var(--text-body);
+}
+[data-theme="light"] .text-slate-400 {
+  color: var(--text-muted);
+}
+[data-theme="light"] .text-slate-500,
+[data-theme="light"] .text-slate-600 {
+  color: var(--text-faint);
+}
+[data-theme="light"] .border-white\/10,
+[data-theme="light"] .border-white\/\[0\.04\],
+[data-theme="light"] .border-white\/\[0\.06\] {
+  border-color: var(--border);
+}
+[data-theme="light"] .bg-white\/\[0\.02\] {
+  background-color: var(--hover);
+}
+[data-theme="light"] .bg-white\/\[0\.04\],
+[data-theme="light"] .bg-white\/\[0\.05\] {
+  background-color: var(--hover-strong);
+}
+[data-theme="light"] .hover\:bg-white\/\[0\.08\]:hover {
+  background-color: var(--hover-strong);
+}
+[data-theme="light"] .divide-white\/\[0\.05\] > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--border);
+}
+[data-theme="light"] .text-emerald-300 {
+  color: #047857;
+}
+[data-theme="light"] .text-emerald-400,
+[data-theme="light"] .text-emerald-400\/70,
+[data-theme="light"] .text-emerald-400\/80 {
+  color: #059669;
+}
+[data-theme="light"] .text-amber-300 {
+  color: #b45309;
+}
+[data-theme="light"] .text-amber-400\/60,
+[data-theme="light"] .text-amber-400\/80 {
+  color: #b45309;
 }
