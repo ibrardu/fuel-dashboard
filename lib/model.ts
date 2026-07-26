@@ -17,6 +17,8 @@ export interface TrendPoint {
   date: string;
   quoted: number;
   fair: number;
+  /** Real blended feedstock cost, ₹/L: (1−p)·base + p·ethanol. */
+  blended: number;
 }
 
 export interface WaterfallInput {
@@ -112,7 +114,7 @@ export function buildDashboardModel(data: DashboardData): DashboardModel {
         blend_fraction: blendFraction,
         energy_factor: energyFactor,
       });
-      return { date: b.date, quoted, fair: cost.fair_retail };
+      return { date: b.date, quoted, fair: cost.fair_retail, blended: cost.blended_base };
     });
 
   const latestCrude = [...data.crude_prices].sort((a, b) => a.date.localeCompare(b.date)).at(-1);
