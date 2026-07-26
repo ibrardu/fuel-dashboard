@@ -1,5 +1,3 @@
-"use client";
-
 import { Car } from "lucide-react";
 
 interface VehicleRow {
@@ -27,9 +25,9 @@ export default function CompatibilityTable() {
       <div className="card-header">
         <div>
           <h2 className="section-title flex items-center gap-2">
-            <Car className="h-5 w-5 text-emerald-500" /> Vehicle E20 Compatibility
+            <Car className="h-5 w-5 text-emerald-500" /> Is your vehicle E20-ready?
           </h2>
-          <p className="subtle">Major OEMs (India market) • Always verify with your vehicle manual / service center</p>
+          <p className="subtle">Major OEMs (India market) • always verify with your vehicle manual / service centre</p>
         </div>
       </div>
 

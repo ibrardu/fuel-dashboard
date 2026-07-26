@@ -77,8 +77,20 @@ body {
   @apply bg-amber-950 text-amber-400 border border-amber-800;
 }
 
-.kpi {
-  @apply bg-slate-900 border border-slate-800 rounded-xl p-4;
+.stat {
+  @apply bg-slate-900 border border-slate-800 rounded-xl p-4 min-w-[9rem];
+}
+
+.stat-label {
+  @apply text-[10px] uppercase tracking-wider text-slate-500;
+}
+
+.stat-value {
+  @apply text-2xl font-semibold tabular-nums tracking-tight text-white mt-1;
+}
+
+.stat-sub {
+  @apply text-[10px] text-slate-500 mt-1;
 }
 
 .source {
