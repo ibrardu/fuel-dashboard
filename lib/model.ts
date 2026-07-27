@@ -52,7 +52,7 @@ export interface DashboardModel {
   blendPct: number;
   energyFactor: number;
   ethanolPrice: number;
-  crude: { usd: number; inr: number; date: string } | null;
+  crude: { usd: number | null; inr: number; date: string } | null;
   delhi: CostBreakdown & { quoted: number; basePrice: number };
   waterfall: WaterfallInput;
   cities: CityRow[];
@@ -155,7 +155,11 @@ export function buildDashboardModel(data: DashboardData): DashboardModel {
     energyFactor,
     ethanolPrice,
     crude: latestCrude
-      ? { usd: Number(latestCrude.indian_basket_usd), inr: Number(latestCrude.usd_inr), date: latestCrude.date }
+      ? {
+          usd: latestCrude.indian_basket_usd != null ? Number(latestCrude.indian_basket_usd) : null,
+          inr: Number(latestCrude.usd_inr),
+          date: latestCrude.date,
+        }
       : null,
     delhi: { ...delhi.cost, quoted: delhi.quoted, basePrice: Number(delhi.buildup.base_price) },
     waterfall: {

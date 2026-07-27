@@ -1,3 +1,4 @@
+import { differenceInCalendarDays } from "date-fns";
 import { getDashboardData } from "@/lib/supabase";
 import { buildDashboardModel } from "@/lib/model";
 import { fetchLiveUsdInr } from "@/lib/fx";
@@ -7,10 +8,17 @@ import BottomNav from "./components/BottomNav";
 
 export const revalidate = 3600;
 
+// A Supabase table can be present but not actually current — e.g. the daily
+// ingestion job has been failing silently for a week. Past this many days
+// since the newest fuel_prices.date, the badge stops calling it "Live".
+const STALE_THRESHOLD_DAYS = 2;
+
 export default async function Page() {
   const { data, source } = await getDashboardData();
   const model = buildDashboardModel(data);
   const defaultCityId = model.cityDetails.find((c) => c.name === "Delhi")?.id ?? model.cityDetails[0].id;
+
+  const isStale = source === "supabase" && differenceInCalendarDays(new Date(), new Date(model.asOf)) > STALE_THRESHOLD_DAYS;
 
   const liveUsdInr = await fetchLiveUsdInr();
   if (liveUsdInr && model.crude) {
@@ -19,7 +27,7 @@ export default async function Page() {
 
   return (
     <div id="top" className="min-h-screen scroll-smooth">
-      <Header asOf={model.asOf} source={source} />
+      <Header asOf={model.asOf} source={source} isStale={isStale} />
 
       <LocationAwareDashboard
         cities={model.cityDetails}

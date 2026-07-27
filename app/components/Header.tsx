@@ -2,7 +2,18 @@ import { Fuel } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import ThemeToggle from "./ThemeToggle";
 
-export default function Header({ asOf, source }: { asOf: string; source: string }) {
+export default function Header({
+  asOf,
+  source,
+  isStale,
+}: {
+  asOf: string;
+  source: string;
+  isStale: boolean;
+}) {
+  const badgeLabel = source !== "supabase" ? "Live · seed" : isStale ? "Live · stale" : "Live";
+  const badgeColor = source === "supabase" && !isStale ? "emerald" : "amber";
+
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6">
@@ -28,12 +39,20 @@ export default function Header({ asOf, source }: { asOf: string; source: string 
           <span className="hidden text-slate-500 sm:inline">
             Updated <span className="tabular-nums text-slate-300">{formatDate(asOf)}</span>
           </span>
-          <span className="badge badge-green">
+          <span className={`badge ${badgeColor === "emerald" ? "badge-green" : "badge-amber"}`}>
             <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span
+                className={`absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 ${
+                  badgeColor === "emerald" ? "bg-emerald-400" : "bg-amber-400"
+                }`}
+              />
+              <span
+                className={`relative inline-flex h-1.5 w-1.5 rounded-full ${
+                  badgeColor === "emerald" ? "bg-emerald-400" : "bg-amber-400"
+                }`}
+              />
             </span>
-            {source === "supabase" ? "Live" : "Live · seed"}
+            {badgeLabel}
           </span>
           <ThemeToggle />
         </div>
