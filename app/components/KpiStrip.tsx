@@ -21,7 +21,7 @@ export default function KpiStrip({
   nationalBlendedCost: number;
   ethanolPrice: number;
   blendPct: number;
-  crude: { usd: number; inr: number; date: string } | null;
+  crude: { usd: number | null; inr: number; date: string } | null;
 }) {
   const discountPct = Math.round((1 - nationalBlendedCost / activeCity.quoted) * 100);
   const spread = activeCity.quoted - nationalBlendedCost;
@@ -29,7 +29,7 @@ export default function KpiStrip({
   const kpis: Kpi[] = [
     {
       label: "Indian Basket Crude",
-      value: crude ? `$${crude.usd.toFixed(1)}` : "—",
+      value: crude?.usd != null ? `$${crude.usd.toFixed(1)}` : "—",
       sub: crude ? `USD/INR ${crude.inr.toFixed(2)}` : "no data",
     },
     {

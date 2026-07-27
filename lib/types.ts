@@ -53,7 +53,8 @@ export interface BlendConfig {
 export interface CrudePrice {
   id?: number;
   date: string;
-  indian_basket_usd: number;
+  /** Null on dates where only the FX rate is known and the crude basket figure isn't yet ingested. */
+  indian_basket_usd: number | null;
   usd_inr: number;
 }
 

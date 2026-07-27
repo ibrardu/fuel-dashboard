@@ -21,7 +21,7 @@ interface Props {
   nationalBlendedCost: number;
   ethanolPrice: number;
   blendPct: number;
-  crude: { usd: number; inr: number; date: string } | null;
+  crude: { usd: number | null; inr: number; date: string } | null;
   trend: TrendPoint[];
 }
 
